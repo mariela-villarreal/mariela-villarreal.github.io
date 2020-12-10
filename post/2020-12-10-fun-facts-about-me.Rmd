@@ -1,0 +1,32 @@
+---
+title: Fun (?) Facts About Me
+author: Mariela Villarreal
+date: '2020-12-10'
+slug: fun-facts-about-me
+categories: []
+tags: []
+description: ''
+---
+
+#Here are some fun facts about me!
+
+##Who am I?
+Height: 5'1"
+
+Hometown: [Laredo, Texas](https://en.wikipedia.org/wiki/Laredo%2C_Texas) 
+
+I was a swimmer in high school. My events were the 500 m freestyle and the 100 m backstroke. 
+
+If I had three wishes, I would wish for the chance to go back in time and see Prince in concert, to have a pet sloth, and have infinitely more wishes. 
+
+##Favorites:
+
+Favorite Song: "De Do Do Do, De Da Da Da" by The Police
+
+Favorite Book: "Wuthering Heights" by Emily Bronte
+
+Favorite Movie: Clueless 
+
+Favorite Color: Blue
+
+Favorite Animal: Sloth
