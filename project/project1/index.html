@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Mariela Villarreal" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Project 1: Exploratory Data Analysis</title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project1/">Project 1: Exploratory Data Analysis</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         January 1, 0001 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="netflix-in-all-kinds-of-weather" class="section level2">
+<h2>Netflix in All Kinds of Weather</h2>
+<div id="introduction" class="section level3">
+<h3>Introduction</h3>
+<p>For my project, I was interested in seeing if my Netflix watching habits were affected in the weather in Laredo, TX (my hometown). The weather in Laredo is pretty predictable; it's usually hot, and it rains every once in a while. I wasn't sure which results I could expect to find, but I knew that I would probably watch TV with greater frequency when it was hotter outside.</p>
+<p>I downloaded my viewing history from Netflix and decided to add a variable for the genre of each movie or TV show that I had watched. The CSV that I uploaded to R had the date that I watched a certain show/movie, the title, and the genre. The weather data that I downloaded was from the National Centers for Environmental Information. It contained weather information taken from a station at the Laredo International Airport from July 2019 - July 2020. The weather dataset contained variables for the Daily Average Dry Bulb Temperature, which is considered to be the temperature of the air and the &quot;true thermodynamic temperature&quot;, according to Wikipedia. The maximum and minimum dry bulb temperature are given. The dataset also includes the air pressure, daily precipitation, daily cooling degree days, and daily heating degree days. Cooling and heating degree days are actually more of a measure of energy consumption. These values indicate the number of degrees either above or below 65 degrees, with cooling degree days being degrees above 65 and heating degree days being degrees below 65. The &quot;cooling&quot; and &quot;heating&quot; refer to the idea that people in a building would want the building to be cooled or heated when the temperature goes above or below 65, respectively. The two datasets were then joined based on date.</p>
+</div>
+<div id="tidying" class="section level3">
+<h3>Tidying</h3>
+<p>Both of the datasets were tidy. However, I needed to clean up the weather dataset quite a bit by removing several columns that were irrelevant (such as variables for snow). The code below shows how I read the CSV in and set the date as a character (because I needed to join on this variable and the date for the Netflix data was also a character). I then filtered based on the report type; &quot;SOD&quot; gave the daily average of all the variables, instead of the hourly data. Next, I selected only the variables that had data. All of the columns removed contained only NAs, but using na.omit() left me with a completely empty dataset. This required me to individually remove every column that was empty. Finally, I cleaned up the value for date, removing the time stamp that was included. I went from a dataset with 124 variable to one with 8.</p>
+<pre class="r"><code>library(readr)
+weather &lt;- read_csv(&quot;weather.csv&quot;, col_types = cols(DATE = col_character()))  #Reading the dataset in
+library(tidyverse)
+library(dplyr)
+weather &lt;- weather %&gt;% filter(REPORT_TYPE == &quot;SOD&quot;)  #Filtering based on report type
+
+weather_data &lt;- weather %&gt;% select(DATE, contains(&quot;Daily&quot;), -contains(&quot;Snow&quot;), 
+    -DailyAverageDewPointTemperature, -DailyDepartureFromNormalAverageTemperature, 
+    -DailyAverageRelativeHumidity, -DailyAverageSeaLevelPressure, 
+    -DailyAverageWetBulbTemperature, -DailyAverageWindSpeed, 
+    -DailyDepartureFromNormalAverageTemperature, -DailyPeakWindDirection, 
+    -DailyPeakWindSpeed, -DailySustainedWindDirection, -DailySustainedWindSpeed, 
+    -DailyWeather)  #Removing irrelevant columns
+
+weather_data &lt;- weather_data %&gt;% separate(DATE, sep = 10, into = c(&quot;Date&quot;, 
+    &quot;Other&quot;))  #Separating the date and time stamp
+weather_data &lt;- weather_data %&gt;% select(-Other) %&gt;% glimpse()  #Removing the time stamp</code></pre>
+<pre><code>## Rows: 818
+## Columns: 8
+## $ Date                           &lt;chr&gt; &quot;2018-07-01&quot;, &quot;2018-07-02&quot;, &quot;2018-07-0…
+## $ DailyAverageDryBulbTemperature &lt;chr&gt; &quot;92&quot;, &quot;90&quot;, &quot;91&quot;, &quot;91&quot;, &quot;88&quot;, &quot;86&quot;, &quot;8…
+## $ DailyAverageStationPressure    &lt;dbl&gt; 29.36, 29.38, 29.38, 29.40, 29.54, 29.…
+## $ DailyCoolingDegreeDays         &lt;chr&gt; &quot;27&quot;, &quot;25&quot;, &quot;26&quot;, &quot;26&quot;, &quot;23&quot;, &quot;21&quot;, &quot;1…
+## $ DailyHeatingDegreeDays         &lt;chr&gt; &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;…
+## $ DailyMaximumDryBulbTemperature &lt;chr&gt; &quot;104&quot;, &quot;103&quot;, &quot;104&quot;, &quot;104&quot;, &quot;99&quot;, &quot;95&quot;…
+## $ DailyMinimumDryBulbTemperature &lt;dbl&gt; 79, 76, 77, 77, 76, 76, 73, 73, 76, 74…
+## $ DailyPrecipitation             &lt;chr&gt; &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0.01&quot;, &quot;0.08&quot;, &quot;T&quot;, &quot;0…</code></pre>
+</div>
+<div id="joiningmerging" class="section level3">
+<h3>Joining/Merging</h3>
+<p>I read in the Netflix history dataset and joined the two datasets by date using full_join. I chose to do a full_join so that I could retain all of the information from both datasets. The two datasets were joined based on date, and using any other join would result in my losing the other variables of one of the datasets. I then removed any NAs from the joined dataset.</p>
+<pre class="r"><code>ntflx_hist &lt;- read_csv(&quot;NetflixViewingHistory-edited.csv&quot;, col_types = cols(Date = col_character()))  #Reading the dataset in. 
+
+joined &lt;- weather_data %&gt;% full_join(ntflx_hist, by = c(Date = &quot;Date&quot;))  #Joining based on date
+joined2 &lt;- joined %&gt;% na.omit()  #Removing NAs</code></pre>
+<p>Next, I decided to create a new column so that I could distinguish between the movies and the TV shows. This was somewhat difficult, since the titles of the TV shows were not uniform. To denote the season of the show, some programs used &quot;Season&quot;, and others used &quot;Collection&quot;, &quot;Chapter&quot;, or &quot;Series&quot;. I separated the title of the program based on these words. I had to download the dataset and make a few adjustments for the Limited Series, whose names were different, in Excel. I read this file back in and made sure that each of the numerical variables were set as numerical in R. I also deleted the row &quot;X1&quot; that was included after I read the dataset back into R. I was then able to further separate the name of the program into Season and Episode. Any movie that I saw would have an &quot;NA&quot; for Episode.</p>
+<pre class="r"><code>joined3 &lt;- joined2 %&gt;% separate(Title, sep = &quot;Season|Collection|Chapter|Series&quot;, 
+    into = c(&quot;Title&quot;, &quot;Other&quot;))  #Separating title into season/episode (&#39;Other&#39;)
+write.csv(joined3, &quot;joined3.csv&quot;)  #Writing the CSV so that I could download it
+joined3 &lt;- read_csv(&quot;joined3.csv&quot;, col_types = cols(DailyAverageDryBulbTemperature = col_number(), 
+    DailyAverageStationPressure = col_number(), DailyCoolingDegreeDays = col_number(), 
+    DailyHeatingDegreeDays = col_number(), DailyMaximumDryBulbTemperature = col_number(), 
+    DailyMinimumDryBulbTemperature = col_number(), X1 = col_character(), 
+    DailyPrecipitation = col_number())) %&gt;% glimpse()  #Reading the dataset back in and adjusting the columns</code></pre>
+<pre><code>## Rows: 588
+## Columns: 12
+## $ X1                             &lt;chr&gt; &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;6&quot;, &quot;7&quot;, &quot;8&quot;…
+## $ Date                           &lt;date&gt; 2019-07-04, 2019-07-04, 2019-07-04, 2…
+## $ DailyAverageDryBulbTemperature &lt;dbl&gt; 92, 92, 92, 92, 92, 92, 92, 93, 93, 93…
+## $ DailyAverageStationPressure    &lt;dbl&gt; 29.32, 29.32, 29.32, 29.32, 29.32, 29.…
+## $ DailyCoolingDegreeDays         &lt;dbl&gt; 27, 27, 27, 27, 27, 27, 27, 28, 28, 28…
+## $ DailyHeatingDegreeDays         &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ DailyMaximumDryBulbTemperature &lt;dbl&gt; 104, 104, 104, 104, 104, 104, 104, 105…
+## $ DailyMinimumDryBulbTemperature &lt;dbl&gt; 80, 80, 80, 80, 80, 80, 80, 80, 81, 81…
+## $ DailyPrecipitation             &lt;dbl&gt; 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.…
+## $ Title                          &lt;chr&gt; &quot;Stranger Things: Stranger Things 3:&quot;,…
+## $ Other                          &lt;chr&gt; &quot;Six: E Pluribus Unum&quot;, &quot;Five: The Fla…
+## $ Genre                          &lt;chr&gt; &quot;Action/Adventure&quot;, &quot;Action/Adventure&quot;…</code></pre>
+<pre class="r"><code>joined4 &lt;- joined3 %&gt;% separate(Other, sep = &quot;:&quot;, into = c(&quot;Season&quot;, 
+    &quot;Episode&quot;))  #Separating season and episode
+joined5 &lt;- joined4 %&gt;% select(-X1)  #Removing a column that was added by Excel</code></pre>
+<p>It was at this point that I realized I hadn't been in Laredo during the whole time the dataset covers. I sliced out rows that covered the time that I was away from Laredo and removed it from the dataset by doing an anti_join.</p>
+<pre class="r"><code>stuff &lt;- joined5 %&gt;% slice(142:215)  #Cutting out the days that I was not in Laredo
+joined6 &lt;- joined5 %&gt;% anti_join(stuff) %&gt;% glimpse()  #Doing an anti_join to remove the rows </code></pre>
+<pre><code>## Rows: 514
+## Columns: 12
+## $ Date                           &lt;date&gt; 2019-07-04, 2019-07-04, 2019-07-04, 2…
+## $ DailyAverageDryBulbTemperature &lt;dbl&gt; 92, 92, 92, 92, 92, 92, 92, 93, 93, 93…
+## $ DailyAverageStationPressure    &lt;dbl&gt; 29.32, 29.32, 29.32, 29.32, 29.32, 29.…
+## $ DailyCoolingDegreeDays         &lt;dbl&gt; 27, 27, 27, 27, 27, 27, 27, 28, 28, 28…
+## $ DailyHeatingDegreeDays         &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ DailyMaximumDryBulbTemperature &lt;dbl&gt; 104, 104, 104, 104, 104, 104, 104, 105…
+## $ DailyMinimumDryBulbTemperature &lt;dbl&gt; 80, 80, 80, 80, 80, 80, 80, 80, 81, 81…
+## $ DailyPrecipitation             &lt;dbl&gt; 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.…
+## $ Title                          &lt;chr&gt; &quot;Stranger Things: Stranger Things 3:&quot;,…
+## $ Season                         &lt;chr&gt; &quot;Six&quot;, &quot;Five&quot;, &quot;Four&quot;, &quot;Three&quot;, &quot;Two&quot;,…
+## $ Episode                        &lt;chr&gt; &quot; E Pluribus Unum&quot;, &quot; The Flayed&quot;, &quot; T…
+## $ Genre                          &lt;chr&gt; &quot;Action/Adventure&quot;, &quot;Action/Adventure&quot;…</code></pre>
+</div>
+<div id="wrangling" class="section level3">
+<h3>Wrangling</h3>
+<p>With my finalized dataset, I created a new variable by converting DailyPrecipitation in inches to millimeters by multiplying the values by 25.4, which is the conversion factor. I also performed my summary statistics before and after grouping by Genre. The average, standard deviation, minimum, maximmum, and variance of each numeric value in the dataset are shown below. This past year was pretty hot in Laredo, with the hottest daily maximum tempeature being 110 degrees Fahrenheit. It also rarely rained, with the average amoung of precipitation being 0.07 inches. The air pressure also did not vary much; standard deviation and variance were both very low. When grouped by genre, a lot of information was created. To summarize a few of the interesting points, the days on which I watched biographies had, on average, the greatest daily average dry bulb temperature, 91 degrees Fahrenheit. Also, days that I spent watching reality TV were days that had the highest average daily precipitation, 0.25 inches.</p>
+<pre class="r"><code>joined6 &lt;- joined6 %&gt;% mutate(mmDailyPrecip = DailyPrecipitation * 
+    25.4)  #Creating a new variable
+
+joined6 %&gt;% summarize_if(is.numeric, c(Mean = mean, Sd = sd, 
+    Min = min, Max = max, Var = var), na.rm = T) %&gt;% pivot_longer(contains(&quot;_&quot;)) %&gt;% 
+    separate(name, into = c(&quot;Variable&quot;, &quot;Statistic&quot;)) %&gt;% pivot_wider(names_from = &quot;Statistic&quot;, 
+    values_from = &quot;value&quot;)  #Creating summary statistics</code></pre>
+<pre><code>## # A tibble: 8 x 6
+##   Variable                          Mean     Sd   Min    Max      Var
+##   &lt;chr&gt;                            &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+## 1 DailyAverageDryBulbTemperature 83.6     9.66   50    95     93.2   
+## 2 DailyAverageStationPressure    29.4     0.124  29.1  29.8    0.0155
+## 3 DailyCoolingDegreeDays         19.0     8.66    0    30     75.0   
+## 4 DailyHeatingDegreeDays          0.403   1.69    0    15      2.86  
+## 5 DailyMaximumDryBulbTemperature 94.5    11.5    55   110    133.    
+## 6 DailyMinimumDryBulbTemperature 72.3     8.28   43    81     68.6   
+## 7 DailyPrecipitation              0.0688  0.276   0     1.84   0.0763
+## 8 mmDailyPrecip                   1.75    7.02    0    46.7   49.2</code></pre>
+<pre class="r"><code>joined6 %&gt;% group_by(Genre) %&gt;% summarize_if(is.numeric, c(Mean = mean, 
+    Sd = sd, Min = min, Max = max, Var = var), na.rm = T) %&gt;% 
+    pivot_longer(contains(&quot;_&quot;)) %&gt;% separate(name, into = c(&quot;Variable&quot;, 
+    &quot;Statistic&quot;)) %&gt;% pivot_wider(names_from = &quot;Statistic&quot;, values_from = &quot;value&quot;)  #Creating summary summary statistics, grouping by genre</code></pre>
+<pre><code>## # A tibble: 96 x 7
+##    Genre          Variable                    Mean      Sd   Min    Max      Var
+##    &lt;chr&gt;          &lt;chr&gt;                      &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+##  1 Action/Advent… DailyAverageDryBulbTemp… 86       7.67    63    95    58.8    
+##  2 Action/Advent… DailyAverageStationPres… 29.4     0.0885  29.2  29.6   0.00784
+##  3 Action/Advent… DailyCoolingDegreeDays   21.1     7.40     0    30    54.8    
+##  4 Action/Advent… DailyHeatingDegreeDays    0.0889  0.417    0     2     0.174  
+##  5 Action/Advent… DailyMaximumDryBulbTemp… 97.2     9.80    67   110    96.1    
+##  6 Action/Advent… DailyMinimumDryBulbTemp… 74.5     6.00    59    81    36.0    
+##  7 Action/Advent… DailyPrecipitation        0.0148  0.0574   0     0.27  0.00329
+##  8 Action/Advent… mmDailyPrecip             0.375   1.46     0     6.86  2.12   
+##  9 Biography      DailyAverageDryBulbTemp… 91      NA       91    91    NA      
+## 10 Biography      DailyAverageStationPres… 29.3    NA       29.3  29.3  NA      
+## # … with 86 more rows</code></pre>
+<pre class="r"><code>joined6 %&gt;% group_by(Genre) %&gt;% summarize_if(is.numeric, c(Mean = mean, 
+    Sd = sd, Min = min, Max = max, Var = var), na.rm = T) %&gt;% 
+    pivot_longer(contains(&quot;_&quot;)) %&gt;% separate(name, into = c(&quot;Variable&quot;, 
+    &quot;Statistic&quot;)) %&gt;% pivot_wider(names_from = &quot;Statistic&quot;, values_from = &quot;value&quot;) %&gt;% 
+    filter(Variable == &quot;DailyAverageDryBulbTemperature&quot;) %&gt;% 
+    select(Mean) %&gt;% arrange(desc(Mean))  #Looking at mean DailyAverageDryBulbTemperature based on genre</code></pre>
+<pre><code>## # A tibble: 12 x 1
+##     Mean
+##    &lt;dbl&gt;
+##  1  91  
+##  2  89.4
+##  3  89.2
+##  4  88.1
+##  5  87.5
+##  6  87  
+##  7  86  
+##  8  86  
+##  9  83.9
+## 10  81.3
+## 11  80.9
+## 12  79.6</code></pre>
+<pre class="r"><code>joined6 %&gt;% group_by(Genre) %&gt;% summarize_if(is.numeric, c(Mean = mean, 
+    Sd = sd, Min = min, Max = max, Var = var), na.rm = T) %&gt;% 
+    pivot_longer(contains(&quot;_&quot;)) %&gt;% separate(name, into = c(&quot;Variable&quot;, 
+    &quot;Statistic&quot;)) %&gt;% pivot_wider(names_from = &quot;Statistic&quot;, values_from = &quot;value&quot;) %&gt;% 
+    filter(Variable == &quot;DailyPrecipitation&quot;) %&gt;% select(Mean) %&gt;% 
+    arrange(desc(Mean))  #Looking at mean DailyPrecipiration based on genre</code></pre>
+<pre><code>## # A tibble: 12 x 1
+##       Mean
+##      &lt;dbl&gt;
+##  1 0.246  
+##  2 0.0829 
+##  3 0.0553 
+##  4 0.0471 
+##  5 0.0264 
+##  6 0.0148 
+##  7 0.00733
+##  8 0.00677
+##  9 0      
+## 10 0      
+## 11 0      
+## 12 0</code></pre>
+<p>The data required a bit more exploration. I first looked at how many movies/TV shows from each genre I had watched. The genre that I saw the most of was comedy, with 150 shows/movies. My favorite genre is Horror, so I wanted to know more about what I had watched and what the weather was like on days that I watched horror movies/shows. On the days that I watched horror movies, the mean daily average temperature was only 81 degrees, and it rained very little (an average of 0.007 inches). I also had an interest to investigate the days that had the hottest daily maximum dry bulb temperature and found that this day was July 13, 2020. On this day, I watched two incredibly long movies (Inglourious Basterds is 2 1/2 hours long and Fiddler on the Roof is 3 hours long). I then wanted to see how many movies I had watched. The movies contain an &quot;NA&quot; in the episode column, so I created a function to add the number of NAs and selected Episode to count the number of movies. During this time, I watched 131 movies. I grouped the data by date and counted the number of rows for each date to see which day I spent watching the most TV; this date happened to be July 29, 2020. On this day, the average temperature was actually very nice - 84 degrees. The show that I have watched the most of is Parks and Recreation, and on the days that I watched Action/Adventure, Comedy, Competition, and Drama, the maxiumum average temperature was 95 degrees.</p>
+<pre class="r"><code>joined6 %&gt;% group_by(Genre) %&gt;% summarize(Numberrows = n()) %&gt;% 
+    arrange(desc(Numberrows))  #Counting the number of shows/movies in each genre</code></pre>
+<pre><code>## # A tibble: 12 x 2
+##    Genre            Numberrows
+##    &lt;chr&gt;                 &lt;int&gt;
+##  1 Comedy                  150
+##  2 Competition             118
+##  3 Reality                  77
+##  4 Drama                    50
+##  5 Action/Adventure         45
+##  6 Horror                   34
+##  7 Crime                    16
+##  8 Documentaries            15
+##  9 Romance                   5
+## 10 Musical                   2
+## 11 Biography                 1
+## 12 Other                     1</code></pre>
+<pre class="r"><code>joined6 %&gt;% filter(Genre == &quot;Horror&quot;) %&gt;% select(Title)  #Listing the horror shows/movies</code></pre>
+<pre><code>## # A tibble: 34 x 1
+##    Title                      
+##    &lt;chr&gt;                      
+##  1 Cam                        
+##  2 As Above, So Below         
+##  3 Scream 3                   
+##  4 The Conjuring              
+##  5 The Crow                   
+##  6 The Texas Chainsaw Massacre
+##  7 The Evil Dead              
+##  8 Candyman                   
+##  9 The Amityville Horror      
+## 10 Rosemary&#39;s Baby            
+## # … with 24 more rows</code></pre>
+<pre class="r"><code>joined6 %&gt;% filter(Genre == &quot;Horror&quot;) %&gt;% summarize_if(is.numeric, 
+    c(Mean = mean, Sd = sd, Min = min, Max = max, Var = var), 
+    na.rm = T) %&gt;% pivot_longer(contains(&quot;_&quot;)) %&gt;% separate(name, 
+    into = c(&quot;Variable&quot;, &quot;Statistic&quot;)) %&gt;% pivot_wider(names_from = &quot;Statistic&quot;, 
+    values_from = &quot;value&quot;)  #Creating summary statistics for horror shows/movies</code></pre>
+<pre><code>## # A tibble: 8 x 6
+##   Variable                           Mean      Sd   Min    Max        Var
+##   &lt;chr&gt;                             &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;
+## 1 DailyAverageDryBulbTemperature 81.3     10.9     56    94    119.      
+## 2 DailyAverageStationPressure    29.4      0.140   29.1  29.7    0.0196  
+## 3 DailyCoolingDegreeDays         17.0      9.43     0    29     88.9     
+## 4 DailyHeatingDegreeDays          0.735    1.96     0     9      3.84    
+## 5 DailyMaximumDryBulbTemperature 91.7     13.7     59   107    189.      
+## 6 DailyMinimumDryBulbTemperature 70.3      8.42    53    81     70.8     
+## 7 DailyPrecipitation              0.00677  0.0221   0     0.12   0.000489
+## 8 mmDailyPrecip                   0.172    0.562    0     3.05   0.316</code></pre>
+<pre class="r"><code>joined6 %&gt;% filter(DailyMaximumDryBulbTemperature == max(DailyMaximumDryBulbTemperature))  #Filtering days where the DailyMaximumDryBulbTemperature was the greatest</code></pre>
+<pre><code>## # A tibble: 7 x 13
+##   Date       DailyAverageDry… DailyAverageSta… DailyCoolingDeg… DailyHeatingDeg…
+##   &lt;date&gt;                &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+## 1 2020-07-13               93             29.3               28                0
+## 2 2020-07-13               93             29.3               28                0
+## 3 2020-07-13               93             29.3               28                0
+## 4 2020-07-13               93             29.3               28                0
+## 5 2020-07-13               93             29.3               28                0
+## 6 2020-07-13               93             29.3               28                0
+## 7 2020-07-13               93             29.3               28                0
+## # … with 8 more variables: DailyMaximumDryBulbTemperature &lt;dbl&gt;,
+## #   DailyMinimumDryBulbTemperature &lt;dbl&gt;, DailyPrecipitation &lt;dbl&gt;,
+## #   Title &lt;chr&gt;, Season &lt;chr&gt;, Episode &lt;chr&gt;, Genre &lt;chr&gt;, mmDailyPrecip &lt;dbl&gt;</code></pre>
+<pre class="r"><code>joined6 %&gt;% filter(Date == &quot;2020-07-13&quot;) %&gt;% select(Title)  #Listing the shows/movies I saw when the DailyMaximumDryBulbTemperature was the greatest</code></pre>
+<pre><code>## # A tibble: 7 x 1
+##   Title                         
+##   &lt;chr&gt;                         
+## 1 The Great British Baking Show:
+## 2 Inglourious Basterds          
+## 3 Fiddler on the Roof           
+## 4 The Great British Baking Show:
+## 5 The Great British Baking Show:
+## 6 The Great British Baking Show:
+## 7 The Great British Baking Show:</code></pre>
+<pre class="r"><code>NumberMovie &lt;- function(x) sum(is.na(x))  #Creating a function to count the number of NAs 
+joined6 %&gt;% select(Episode) %&gt;% summarize_all(NumberMovie)  #Counting the number of NAs in the Episode column/counting number of movies seen</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   Episode
+##     &lt;int&gt;
+## 1     131</code></pre>
+<pre class="r"><code>joined6 %&gt;% group_by(Date) %&gt;% summarize(NumberDays = n()) %&gt;% 
+    arrange(desc(NumberDays))  #Listing the number of shows/movies I watched on each day</code></pre>
+<pre><code>## # A tibble: 139 x 2
+##    Date       NumberDays
+##    &lt;date&gt;          &lt;int&gt;
+##  1 2020-07-29         16
+##  2 2020-04-12         15
+##  3 2020-04-29         15
+##  4 2020-07-15         11
+##  5 2019-07-30          9
+##  6 2019-08-15          9
+##  7 2019-08-18          9
+##  8 2020-04-14          9
+##  9 2020-07-06          9
+## 10 2020-07-16          9
+## # … with 129 more rows</code></pre>
+<pre class="r"><code>joined6 %&gt;% filter(Date == &quot;2020-07-29&quot;)  #Looking into the day where I watched the most TV </code></pre>
+<pre><code>## # A tibble: 16 x 13
+##    Date       DailyAverageDry… DailyAverageSta… DailyCoolingDeg…
+##    &lt;date&gt;                &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+##  1 2020-07-29               84             29.4               19
+##  2 2020-07-29               84             29.4               19
+##  3 2020-07-29               84             29.4               19
+##  4 2020-07-29               84             29.4               19
+##  5 2020-07-29               84             29.4               19
+##  6 2020-07-29               84             29.4               19
+##  7 2020-07-29               84             29.4               19
+##  8 2020-07-29               84             29.4               19
+##  9 2020-07-29               84             29.4               19
+## 10 2020-07-29               84             29.4               19
+## 11 2020-07-29               84             29.4               19
+## 12 2020-07-29               84             29.4               19
+## 13 2020-07-29               84             29.4               19
+## 14 2020-07-29               84             29.4               19
+## 15 2020-07-29               84             29.4               19
+## 16 2020-07-29               84             29.4               19
+## # … with 9 more variables: DailyHeatingDegreeDays &lt;dbl&gt;,
+## #   DailyMaximumDryBulbTemperature &lt;dbl&gt;, DailyMinimumDryBulbTemperature &lt;dbl&gt;,
+## #   DailyPrecipitation &lt;dbl&gt;, Title &lt;chr&gt;, Season &lt;chr&gt;, Episode &lt;chr&gt;,
+## #   Genre &lt;chr&gt;, mmDailyPrecip &lt;dbl&gt;</code></pre>
+<pre class="r"><code>joined6 %&gt;% group_by(Genre, Title) %&gt;% summarize(NumberGenre = n()) %&gt;% 
+    arrange(desc(NumberGenre))  #Listing what show/movie I had seen the most</code></pre>
+<pre><code>## # A tibble: 181 x 3
+## # Groups:   Genre [12]
+##    Genre       Title                             NumberGenre
+##    &lt;chr&gt;       &lt;chr&gt;                                   &lt;int&gt;
+##  1 Comedy      Parks and Recreation:                      43
+##  2 Competition The Great British Baking Show:             41
+##  3 Reality     Storage Wars: Northern Treasures:          36
+##  4 Reality     Yummy Mummies:                             20
+##  5 Drama       Dead to Me:                                14
+##  6 Crime       In the Dark:                               13
+##  7 Comedy      Derry Girls:                               12
+##  8 Comedy      Grace and Frankie:                         12
+##  9 Comedy      GLOW:                                      10
+## 10 Competition Sugar Rush:                                10
+## # … with 171 more rows</code></pre>
+<pre class="r"><code>joined6 %&gt;% group_by(Genre) %&gt;% summarize(Max = max(DailyAverageDryBulbTemperature)) %&gt;% 
+    arrange(desc(Max))  #Looking into what genre I watched when the DailyAverageDryBulbTemperature was the highest</code></pre>
+<pre><code>## # A tibble: 12 x 2
+##    Genre              Max
+##    &lt;chr&gt;            &lt;dbl&gt;
+##  1 Action/Adventure    95
+##  2 Comedy              95
+##  3 Competition         95
+##  4 Drama               95
+##  5 Horror              94
+##  6 Romance             94
+##  7 Musical             93
+##  8 Reality             93
+##  9 Crime               92
+## 10 Documentaries       92
+## 11 Biography           91
+## 12 Other               87</code></pre>
+</div>
+<div id="visualizations" class="section level3">
+<h3>Visualizations</h3>
+<p>To show the correlation between all of my numeric variables, I created a correlation heatmap. As shown, the variables with the highest correlation are DailyAverageDryBulbTemperature with DailyCooolingDegreeDays (0.98). This makes sense, since cooling degree days are calculated based on the number of degrees above or below 65 degrees.</p>
+<pre class="r"><code>cormat &lt;- joined6 %&gt;% select_if(is.numeric) %&gt;% cor(use = &quot;pair&quot;)  #Creating a correlation matrix
+tidycor &lt;- cormat %&gt;% as.data.frame %&gt;% rownames_to_column(&quot;var1&quot;) %&gt;% 
+    pivot_longer(-1, names_to = &quot;var2&quot;, values_to = &quot;correlation&quot;)  #Tidying correlation matrix
+
+tidycor %&gt;% arrange(desc(correlation))  #Correlation Data</code></pre>
+<pre><code>## # A tibble: 64 x 3
+##    var1                           var2                           correlation
+##    &lt;chr&gt;                          &lt;chr&gt;                                &lt;dbl&gt;
+##  1 DailyAverageDryBulbTemperature DailyAverageDryBulbTemperature           1
+##  2 DailyAverageStationPressure    DailyAverageStationPressure              1
+##  3 DailyCoolingDegreeDays         DailyCoolingDegreeDays                   1
+##  4 DailyHeatingDegreeDays         DailyHeatingDegreeDays                   1
+##  5 DailyMaximumDryBulbTemperature DailyMaximumDryBulbTemperature           1
+##  6 DailyMinimumDryBulbTemperature DailyMinimumDryBulbTemperature           1
+##  7 DailyPrecipitation             DailyPrecipitation                       1
+##  8 DailyPrecipitation             mmDailyPrecip                            1
+##  9 mmDailyPrecip                  DailyPrecipitation                       1
+## 10 mmDailyPrecip                  mmDailyPrecip                            1
+## # … with 54 more rows</code></pre>
+<pre class="r"><code>tidycor %&gt;% ggplot(aes(var1, var2, fill = correlation)) + geom_tile() + 
+    geom_text(aes(label = round(correlation, 2))) + xlab(&quot;&quot;) + 
+    ylab(&quot;&quot;) + coord_fixed() + theme(axis.text.x = element_text(angle = 45, 
+    hjust = 1)) + ggtitle(&quot;Correlation Heatmap&quot;)  #Creating correlation heatmap</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>I was interested to see the relationship between DailyAverageDryBulbTemperature and DailyAverageStationPressure. The graph below shows the linear regression for these values and the negative relationship they have. Each line on the graph represents a genre, and the genre with the strongest negative relationship (steepest slope) appears with Drama movies/shows. The weakest negative relationship appears with Romance movies/shows. Interestingly, it appears that Musicals actually have a slightly positive relationship between pressure and temperature.</p>
+<pre class="r"><code>joined6 %&gt;% ggplot(aes(DailyAverageDryBulbTemperature, DailyAverageStationPressure)) + 
+    geom_smooth(method = lm, aes(color = Genre)) + geom_point(aes(color = Genre)) + 
+    ggtitle(&quot;Relationship between Temperature and Pressure in Laredo, Texas&quot;) + 
+    theme_dark() + ylab(label = &quot;Daily Average Station Pressure&quot;) + 
+    xlab(label = &quot;Daily Average Dry Bulb Temperature&quot;)  #Linear regresstion relationship between DailyAverageDryBulbTemperature and DailyAverageStationPressur</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The relationship between average DailyPrecipitation and DailyAverageDryBulbTemperature is shown below. In Laredo, it doesn't rain very often (which is evident by the number of points at 0 inches of rain). However, the highest average daily precipitation occurred with a reality TV show. There is a slight negative correlation that can be seen between these two variables, indicating that there is less rain when it is hotter outside.</p>
+<pre class="r"><code>joined6 %&gt;% ggplot(aes(DailyAverageDryBulbTemperature, DailyPrecipitation, 
+    color = Genre)) + geom_point(aes(y = DailyPrecipitation), 
+    stat = &quot;summary&quot;, fun = &quot;mean&quot;) + xlim(45, 95) + ylim(-0.1, 
+    1.75) + ggtitle(&quot;Relationship between Temperature and Average Temperature in Laredo, Texas&quot;) + 
+    ylab(label = &quot;Average Daily Precipitation&quot;) + xlab(label = &quot;Daily Average Dry Bulb Temperature&quot;)  #Scatterplot showing relationship between DailyPrecipitation and DailyAverageDryBulbTemperature</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dimensionality-reduction" class="section level3">
+<h3>Dimensionality Reduction</h3>
+<p>For my data, I chose to run PCA on my numerical variables. As seen in the summary of the loadings, the PCs that were kept were the first two (Comp.1 and Comp.2), since, according to the cumulative proportion, they account for 85% of the variance. Higher scores for PC1 (Comp.1) mean lower station pressure, precipitation and heating degree days, but higher temperature (average, maximum, and minimum) and cooling degree days. Higher scores for PC2 (Comp.2) mean lower cooling degree days and higher precipitation. These relationships makes sense based on the correlation heatmap and the relationships shown in the graphs above.</p>
+<pre class="r"><code>joined7 &lt;- joined6 %&gt;% select(-Genre, -Episode, -Season) %&gt;% 
+    na.omit()  #This captures only the numeric variables and removes any NAs from the data. 
+joined_nums &lt;- joined7 %&gt;% select_if(is.numeric) %&gt;% scale  #This scales the data (divides by the standard deviation)
+rownames(joined_nums) &lt;- joined7$Title
+joined_PCA &lt;- princomp(joined_nums)  #This performs the actual PCA
+summary(joined_PCA, loadings = T)</code></pre>
+<pre><code>## Importance of components:
+##                           Comp.1    Comp.2     Comp.3    Comp.4      Comp.5
+## Standard deviation     2.2012309 1.4002508 0.81090404 0.6645311 0.277569190
+## Proportion of Variance 0.6069741 0.2456126 0.08237168 0.0553184 0.009651204
+## Cumulative Proportion  0.6069741 0.8525867 0.93495841 0.9902768 0.999928018
+##                              Comp.6 Comp.7 Comp.8
+## Standard deviation     2.397135e-02      0      0
+## Proportion of Variance 7.198203e-05      0      0
+## Cumulative Proportion  1.000000e+00      1      1
+## 
+## Loadings:
+##                                Comp.1 Comp.2 Comp.3 Comp.4 Comp.5 Comp.6 Comp.7
+## DailyAverageDryBulbTemperature  0.447         0.198                0.457       
+## DailyAverageStationPressure    -0.319         0.697  0.638                     
+## DailyCoolingDegreeDays          0.435         0.325 -0.141         0.492       
+## DailyHeatingDegreeDays         -0.323 -0.178  0.525 -0.750                     
+## DailyMaximumDryBulbTemperature  0.442         0.152         0.655 -0.593       
+## DailyMinimumDryBulbTemperature  0.430         0.252        -0.745 -0.435       
+## DailyPrecipitation             -0.108  0.691                             -0.707
+## mmDailyPrecip                  -0.108  0.691                              0.707
+##                                Comp.8
+## DailyAverageDryBulbTemperature  0.739
+## DailyAverageStationPressure          
+## DailyCoolingDegreeDays         -0.661
+## DailyHeatingDegreeDays          0.130
+## DailyMaximumDryBulbTemperature       
+## DailyMinimumDryBulbTemperature       
+## DailyPrecipitation                   
+## mmDailyPrecip</code></pre>
+<p>The data, with respect to PC1 and PC2, is shown in the graph below. The data contains many points that are higher for PC1 and around zero for PC2. There are a few points that are extreme for PC1 (on the lower end) and PC2 (on the higher end); these points are investigated later.</p>
+<pre class="r"><code>joined7df &lt;- data.frame(Date = joined7$Date, PC1 = joined_PCA$scores[, 
+    1], PC2 = joined_PCA$scores[, 2])  #this creates a dataframe from the PCA data
+joined7df %&gt;% ggplot(aes(PC1, PC2)) + geom_point() + ggtitle(&quot;Plot of PC1 vs PC2&quot;) + 
+    xlim(-10, 2.5) + ylim(-4, 10)  #Plot of PC1 and PC2</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The graph below shows the variables that contribute to both PCs. You can see, that the main driver for PC2 is DailyPrecipitation, while temperature (average, minimum, and maximum) contribute to a posisive PC1 score.</p>
+<pre class="r"><code>joined_PCA$loadings[1:7, 1:2] %&gt;% as.data.frame %&gt;% rownames_to_column %&gt;% 
+    ggplot() + geom_hline(aes(yintercept = 0), lty = 2) + geom_vline(aes(xintercept = 0), 
+    lty = 2) + ylab(&quot;PC2&quot;) + xlab(&quot;PC1&quot;) + geom_segment(aes(x = 0, 
+    y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(), col = &quot;red&quot;) + 
+    geom_label(aes(x = Comp.1 * 1.1, y = Comp.2 * 1.1, label = rowname)) + 
+    ylim(-1, 1) + xlim(-0.75, 0.75)  #Plot of loadings</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The extreme points shown in the Plot of PC1 vs. PC2 are investigated here. The points that are on the extreme low end of PC1 belong to several episodes of the show &quot;The End of the F-ing World&quot;, &quot;Jenny Slate:Stage Fright&quot;, and an episode of &quot;The Great British Baking Show: The Holidays&quot;. The days that I watched these shows were cold, with high heating degree days and low precipitation. The points that are on the extreme high end of PC1 correspond with several episodes of a ridiculous Australian reality TV show called &quot;Yummy Mummies&quot; that I binged over the course of several days. On these days, there was quite a lot of rain and the temperatures were low (with zero heating degree days).</p>
+<pre class="r"><code>joined_PCA$scores[, 1:4] %&gt;% as.data.frame %&gt;% top_n(-3, Comp.1)  #Exploring the lowest three PC1 scores</code></pre>
+<pre><code>##                                             Comp.1    Comp.2   Comp.3    Comp.4
+## The.End.of.the.F...ing.World.            -8.534219 -2.231747 3.591325 -3.510284
+## The.End.of.the.F...ing.World..1          -8.534219 -2.231747 3.591325 -3.510284
+## The.End.of.the.F...ing.World..2          -8.534219 -2.231747 3.591325 -3.510284
+## Jenny.Slate..Stage.Fright                -8.534219 -2.231747 3.591325 -3.510284
+## The.Great.British.Baking.Show..Holidays. -8.677936 -2.491296 3.258879 -4.374384</code></pre>
+<pre class="r"><code>joined7 %&gt;% filter(Title %in% c(&quot;The End of the F***ing World:&quot;, 
+    &quot;Jenny Slate: Stage Fright&quot;, &quot;The Great British Baking Show: Holidays:&quot;))  #Exploring days with lowest PC1 scores</code></pre>
+<pre><code>## # A tibble: 11 x 10
+##    Date       DailyAverageDry… DailyAverageSta… DailyCoolingDeg…
+##    &lt;date&gt;                &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+##  1 2019-11-08               51             29.8                0
+##  2 2019-11-08               51             29.8                0
+##  3 2019-11-08               51             29.8                0
+##  4 2019-11-08               51             29.8                0
+##  5 2019-11-09               62             29.7                0
+##  6 2019-11-09               62             29.7                0
+##  7 2019-11-09               62             29.7                0
+##  8 2019-11-10               65             29.5                0
+##  9 2019-11-10               65             29.5                0
+## 10 2019-11-10               65             29.5                0
+## 11 2019-11-14               50             29.7                0
+## # … with 6 more variables: DailyHeatingDegreeDays &lt;dbl&gt;,
+## #   DailyMaximumDryBulbTemperature &lt;dbl&gt;, DailyMinimumDryBulbTemperature &lt;dbl&gt;,
+## #   DailyPrecipitation &lt;dbl&gt;, Title &lt;chr&gt;, mmDailyPrecip &lt;dbl&gt;</code></pre>
+<pre class="r"><code>joined_PCA$scores[, 1:4] %&gt;% as.data.frame %&gt;% top_n(3, Comp.2)  #Exploring the highest three PC2 scores</code></pre>
+<pre><code>##                      Comp.1   Comp.2    Comp.3     Comp.4
+## Yummy.Mummies.    -2.492453 8.778635 0.9790025 0.01233305
+## Yummy.Mummies..1  -2.492453 8.778635 0.9790025 0.01233305
+## Yummy.Mummies..10 -2.533421 7.480994 0.6880809 0.13133720
+## Yummy.Mummies..11 -2.533421 7.480994 0.6880809 0.13133720
+## Yummy.Mummies..12 -2.533421 7.480994 0.6880809 0.13133720
+## Yummy.Mummies..13 -2.533421 7.480994 0.6880809 0.13133720
+## Yummy.Mummies..14 -2.533421 7.480994 0.6880809 0.13133720
+## Yummy.Mummies..15 -2.533421 7.480994 0.6880809 0.13133720
+## Yummy.Mummies..16 -2.533421 7.480994 0.6880809 0.13133720</code></pre>
+<pre class="r"><code>joined7 %&gt;% filter(Title == &quot;Yummy Mummies:&quot;)  #Exploring days with highest PC2 scores. </code></pre>
+<pre><code>## # A tibble: 20 x 10
+##    Date       DailyAverageDry… DailyAverageSta… DailyCoolingDeg…
+##    &lt;date&gt;                &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+##  1 2020-05-29               79             29.5               14
+##  2 2020-05-29               79             29.5               14
+##  3 2020-05-30               79             29.5               14
+##  4 2020-05-30               79             29.5               14
+##  5 2020-05-30               79             29.5               14
+##  6 2020-05-30               79             29.5               14
+##  7 2020-05-30               79             29.5               14
+##  8 2020-05-30               79             29.5               14
+##  9 2020-05-30               79             29.5               14
+## 10 2020-05-30               79             29.5               14
+## 11 2020-05-31               77             29.5               12
+## 12 2020-05-31               77             29.5               12
+## 13 2020-05-31               77             29.5               12
+## 14 2020-05-31               77             29.5               12
+## 15 2020-05-31               77             29.5               12
+## 16 2020-05-31               77             29.5               12
+## 17 2020-05-31               77             29.5               12
+## 18 2020-06-01               79             29.5               14
+## 19 2020-06-01               79             29.5               14
+## 20 2020-06-01               79             29.5               14
+## # … with 6 more variables: DailyHeatingDegreeDays &lt;dbl&gt;,
+## #   DailyMaximumDryBulbTemperature &lt;dbl&gt;, DailyMinimumDryBulbTemperature &lt;dbl&gt;,
+## #   DailyPrecipitation &lt;dbl&gt;, Title &lt;chr&gt;, mmDailyPrecip &lt;dbl&gt;</code></pre>
+<p>...</p>
+</div>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

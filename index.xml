@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mariela M. Villarreal</title>
+    <link>/</link>
+    <description>Recent content on Mariela M. Villarreal</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 10 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>My First Blog Post!!</title>
+      <link>/post/2020/12/10/my-first-blog-post/</link>
+      <pubDate>Thu, 10 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/10/my-first-blog-post/</guid>
+      <description>Hello!! This is my first official blog post, and I am going to use it to show off a little bit. Throughout this class, I learned how to use R, and I loved it. Towards, the end of class, we learned Python. Although, I personally enjoy R more than Python, we can actually use both of these programs at the same time, which is awesome! In the R chuck below, I&#39;m going to be maniupulating some data from the &amp;quot;movies6&amp;quot; dataset from my second project.</description>
+    </item>
+    
+    <item>
+      <title>Project 1: Exploratory Data Analysis</title>
+      <link>/project/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project1/</guid>
+      <description>Netflix in All Kinds of Weather Introduction For my project, I was interested in seeing if my Netflix watching habits were affected in the weather in Laredo, TX (my hometown). The weather in Laredo is pretty predictable; it&#39;s usually hot, and it rains every once in a while. I wasn&#39;t sure which results I could expect to find, but I knew that I would probably watch TV with greater frequency when it was hotter outside.</description>
+    </item>
+    
+    <item>
+      <title>Project 2: Modeling, Testing, and Predicting</title>
+      <link>/project/project2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>What Makes a Good Movie? With this project, I sought to continue with the theme of my first project: movies. I found a great dataset containing the information for over 58,000 movies listed on IMDb (the internet movie database). For each movie, the title, length of the movie (in minutes), year it was made, budget (in US dollars), IMDb rating (on a scale of 1-10, with 10 being the highest rated movie), total user votes for that movie, other rating information, mpaa rating (PG, PG-13, R or NC-17) and genre were given.</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/</guid>
+      <description> Check out some of my coding projects below:
+ Wrangling &amp;amp; Exploratory Data Analysis
+ Modeling, Inference, Prediction
+  -- </description>
+    </item>
+    
+    <item>
+      <title>Resume</title>
+      <link>/resume/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/resume/</guid>
+      <description>    </description>
+    </item>
+    
+  </channel>
+</rss>

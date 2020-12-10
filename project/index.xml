@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on Mariela M. Villarreal</title>
+    <link>/project/</link>
+    <description>Recent content in Projects on Mariela M. Villarreal</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language><atom:link href="/project/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Project 1: Exploratory Data Analysis</title>
+      <link>/project/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project1/</guid>
+      <description>Netflix in All Kinds of Weather Introduction For my project, I was interested in seeing if my Netflix watching habits were affected in the weather in Laredo, TX (my hometown). The weather in Laredo is pretty predictable; it&#39;s usually hot, and it rains every once in a while. I wasn&#39;t sure which results I could expect to find, but I knew that I would probably watch TV with greater frequency when it was hotter outside.</description>
+    </item>
+    
+    <item>
+      <title>Project 2: Modeling, Testing, and Predicting</title>
+      <link>/project/project2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>What Makes a Good Movie? With this project, I sought to continue with the theme of my first project: movies. I found a great dataset containing the information for over 58,000 movies listed on IMDb (the internet movie database). For each movie, the title, length of the movie (in minutes), year it was made, budget (in US dollars), IMDb rating (on a scale of 1-10, with 10 being the highest rated movie), total user votes for that movie, other rating information, mpaa rating (PG, PG-13, R or NC-17) and genre were given.</description>
+    </item>
+    
+  </channel>
+</rss>

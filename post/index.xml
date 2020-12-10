@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Mariela M. Villarreal</title>
+    <link>/post/</link>
+    <description>Recent content in Posts on Mariela M. Villarreal</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 10 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>My First Blog Post!!</title>
+      <link>/post/2020/12/10/my-first-blog-post/</link>
+      <pubDate>Thu, 10 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/10/my-first-blog-post/</guid>
+      <description>Hello!! This is my first official blog post, and I am going to use it to show off a little bit. Throughout this class, I learned how to use R, and I loved it. Towards, the end of class, we learned Python. Although, I personally enjoy R more than Python, we can actually use both of these programs at the same time, which is awesome! In the R chuck below, I&#39;m going to be maniupulating some data from the &amp;quot;movies6&amp;quot; dataset from my second project.</description>
+    </item>
+    
+  </channel>
+</rss>
