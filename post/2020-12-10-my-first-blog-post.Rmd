@@ -14,26 +14,26 @@ description: ''
 
 ##Hello!!
 
-This is my first official blog post, and I am going to use it to show off a little bit. Throughout this class, I learned how to use R, and I loved it. Towards, the end of class, we learned Python. Although, I personally enjoy R more than Python, we can actually use both of these programs at the same time, which is awesome! In the R chuck below, I'm going to be maniupulating some data from the "movies6" dataset from my [second project](/project/project2/). First, I have to read the dataset in. Then, I start getting some stats. 
+  This is my first official blog post, and I am going to use it to show off a little bit. Throughout this class, I learned how to use R, and I loved it. Towards, the end of class, we learned Python. Although, I personally enjoy R more than Python, we can actually use both of these programs at the same time, which is awesome! In the R chuck below, I'm going to be maniupulating some data from the "movies6" dataset from my [second project](/project/project2/). First, I have to read the dataset in. Then, I start getting some stats. 
 
 ```{R}
 library(dplyr)
 movies <- read.csv("movies6.csv")
-movies %>% summarize(mean(budget))
-movies %>% summarize(max(length))
-movies %>% summarize(min(rating))
+movies %>% summarize(mean(budget)) #average movie budget
+movies %>% summarize(max(length)) #maximum movie length
+movies %>% summarize(min(rating)) #lowest rated movie
 library(reticulate)
 ```
 
-This code shows that the mean budget for the movies in my dataset is $29,367,479, the longest movie in my dataset is 251 minutes, and the lowest rated movie in my dataset has a 1.7. 
+  This code shows that the mean budget for the movies in my dataset is $29,367,479, the longest movie in my dataset is 251 minutes, and the lowest rated movie in my dataset has a 1.7. 
 
 
 
-Now I'm going to show you how to do the same thing in Python!
+  Let's do the same thing in Python! By using reticulate (in previous chunk), we can let the R and Python chunks talk to each other and share data. Now I can manipulate a dataset from R with Python code!
 ```{python}
-r.movies.budget.mean()
-r.movies.length.max()
-r.movies.rating.min()
+r.movies.budget.mean() #average movie budget
+r.movies.length.max() #maximum movie length
+r.movies.rating.min() #lowest rated movie
 ```
 
 We get the same results!! 

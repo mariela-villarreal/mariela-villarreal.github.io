@@ -89,23 +89,23 @@
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
 <pre class="r"><code>movies &lt;- read.csv(&quot;movies6.csv&quot;)
-movies %&gt;% summarize(mean(budget))</code></pre>
+movies %&gt;% summarize(mean(budget)) #average movie budget</code></pre>
 <pre><code>##   mean(budget)
 ## 1     29367479</code></pre>
-<pre class="r"><code>movies %&gt;% summarize(max(length))</code></pre>
+<pre class="r"><code>movies %&gt;% summarize(max(length)) #maximum movie length</code></pre>
 <pre><code>##   max(length)
 ## 1         251</code></pre>
-<pre class="r"><code>movies %&gt;% summarize(min(rating))</code></pre>
+<pre class="r"><code>movies %&gt;% summarize(min(rating)) #lowest rated movie</code></pre>
 <pre><code>##   min(rating)
 ## 1         1.7</code></pre>
 <pre class="r"><code>library(reticulate)</code></pre>
 <p>This code shows that the mean budget for the movies in my dataset is $29,367,479, the longest movie in my dataset is 251 minutes, and the lowest rated movie in my dataset has a 1.7.</p>
-<p>Now I'm going to show you how to do the same thing in Python!</p>
-<pre class="python"><code>r.movies.budget.mean()</code></pre>
+<p>Let's do the same thing in Python! By using reticulate (in previous chunk), we can let the R and Python chunks talk to each other and share data. Now I can manipulate a dataset from R with Python code!</p>
+<pre class="python"><code>r.movies.budget.mean() #average movie budget</code></pre>
 <pre><code>## 29367479.367537312</code></pre>
-<pre class="python"><code>r.movies.length.max()</code></pre>
+<pre class="python"><code>r.movies.length.max() #maximum movie length</code></pre>
 <pre><code>## 251</code></pre>
-<pre class="python"><code>r.movies.rating.min()</code></pre>
+<pre class="python"><code>r.movies.rating.min() #lowest rated movie</code></pre>
 <pre><code>## 1.7</code></pre>
 <p>We get the same results!!</p>
 </div>
