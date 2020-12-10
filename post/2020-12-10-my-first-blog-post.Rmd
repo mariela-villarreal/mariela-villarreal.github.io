@@ -35,3 +35,5 @@ r.movies.budget.mean()
 r.movies.length.max()
 r.movies.rating.min()
 ```
+
+We get the same results!! 
