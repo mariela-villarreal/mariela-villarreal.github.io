@@ -108,6 +108,22 @@ movies %&gt;% summarize(mean(budget)) #average movie budget</code></pre>
 <pre class="python"><code>r.movies.rating.min() #lowest rated movie</code></pre>
 <pre><code>## 1.7</code></pre>
 <p>We get the same results!!</p>
+<p>We can even work with strings!</p>
+<pre class="r"><code>#creating our strings in R
+cool_stuff=&quot;hello, how are you?&quot;
+other_stuff=&quot;1a2b3c4d5e6f7g&quot;
+library(reticulate)</code></pre>
+<p>Now we can work with &quot;cool_stuff&quot; and &quot;other_stuff&quot; in Python. Here, I'm splitting up &quot;cool_stuff&quot; by the spaces and pulling out only the numbers from &quot;other_stuff&quot;.</p>
+<pre class="python"><code>print(r.cool_stuff)</code></pre>
+<pre><code>## hello, how are you?</code></pre>
+<pre class="python"><code>print(r.other_stuff)</code></pre>
+<pre><code>## 1a2b3c4d5e6f7g</code></pre>
+<pre class="python"><code>import re
+re.split(r&quot;\s&quot;,r.cool_stuff) #splitting by spaces </code></pre>
+<pre><code>## [&#39;hello,&#39;, &#39;how&#39;, &#39;are&#39;, &#39;you?&#39;]</code></pre>
+<pre class="python"><code>re.findall(r&quot;\d&quot;,r.other_stuff) #finding only numbers</code></pre>
+<pre><code>## [&#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;]</code></pre>
+<p>Pretty cool, huh? I think so.</p>
 </div>
 
             

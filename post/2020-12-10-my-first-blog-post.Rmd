@@ -37,3 +37,24 @@ r.movies.rating.min() #lowest rated movie
 ```
 
 We get the same results!! 
+
+We can even work with strings!
+```{R}
+#creating our strings in R
+cool_stuff="hello, how are you?"
+other_stuff="1a2b3c4d5e6f7g"
+library(reticulate)
+```
+
+
+Now we can work with "cool_stuff" and "other_stuff" in Python. Here, I'm splitting up "cool_stuff" by the spaces and pulling out only the numbers from "other_stuff". 
+```{python}
+print(r.cool_stuff)
+print(r.other_stuff)
+
+import re
+re.split(r"\s",r.cool_stuff) #splitting by spaces 
+re.findall(r"\d",r.other_stuff) #finding only numbers
+``` 
+
+Pretty cool, huh? I think so. 
