@@ -7,9 +7,7 @@ categories: []
 tags: []
 description: ''
 ---
-
-![](/post/2020-12-10-my-first-blog-post_files/python.jpg)
-
+![](/post/2020-12-10-my-first-blog-post_files/python.new.jpg)
 
 
 ##Hello!!  
